@@ -1,9 +1,8 @@
 function Shape({x, y, r}) {
-  this.x = x;
-  this.y = y;
-  this.r = r;
+    this.boundingCircle = {x : x , y:y, r:r};
 
   this.display = function () {
-      circle(x, y, r);
+      let c = this.boundingCircle;
+      circle(c.x, c.y, c.r);
   }
 }
