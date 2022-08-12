@@ -25,7 +25,7 @@ function setup() {
 
     for (let i = 0; i < config.numShapes; i++) {
         shapes.push(
-            new Shape(random(config.canvasWidth), random(config.canvasHeight), random(5, config.canvasHeight / 5))
+            new Shape({x:random(config.canvasWidth), y: random(config.canvasHeight), r:random(5, config.canvasHeight / 5)})
         )
     }
 }
@@ -44,14 +44,13 @@ function loadGitVersion() {
 
 function saveArt() {
     console.log("saved");
-
     let name =
         config.canvasName + "--latestVersion-" + latestGitVersion + "--seed-" + config.seed;
     saveCanvas(canvas, name, "png");
 }
 
 function draw() {
-    console.log(config.seed);
+    console.debug(config.seed);
 
     for (let i = 0; i < shapes.length; i++) {
         let shape = shapes[i];

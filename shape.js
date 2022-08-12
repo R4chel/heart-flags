@@ -1,4 +1,4 @@
-function Shape(x, y, r) {
+function Shape({x, y, r}) {
   this.x = x;
   this.y = y;
   this.r = r;
