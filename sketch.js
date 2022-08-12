@@ -11,7 +11,6 @@ function setup() {
         seed
     });
     config.setSeed();
-    loadGitVersion();
 
     createCanvas(config.canvasWidth, config.canvasHeight);
     colorMode(HSB, 360, 100, 100, 1);
@@ -30,22 +29,10 @@ function setup() {
     }
 }
 
-function loadGitVersion() {
-    let filename = "../assets/gitversion.txt";
-    loadStrings(filename,
-        function(str) {
-            latestGitVersion = str[0];
-        },
-        function(err) {
-            latestGitVersion = "unknown";
-            console.error("unable to load file", err);
-        });
-}
-
 function saveArt() {
     console.log("saved");
     let name =
-        config.canvasName + "--latestVersion-" + latestGitVersion + "--seed-" + config.seed;
+        config.canvasName + "--seed-" + config.seed;
     saveCanvas(canvas, name, "png");
 }
 
