@@ -113,7 +113,9 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
 }
 
 function colorAtPoint(x,y) {
-
+    let colors = config.flagColors();
+    let index = floor(y * colors.length/ config.canvasHeight);
+    return colors[index];
 }
 
 
@@ -123,7 +125,7 @@ function draw() {
 
     for (let i = 0; i < shapes.length; i++) {
         let shape = shapes[i];
-        shape.display();
+        shape.display(colorAtPoint);
     }
     if(config.targetAreaFilled() > filledArea){
         maybeAddShape();
