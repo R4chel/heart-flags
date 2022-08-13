@@ -7,6 +7,7 @@ function Config({
     maxPossibleRadius,
     targetPercentFilled,
     whichFlag,
+    backgroundColor,
 }) {
     this.debug = debug === undefined ? false : debug;
     this.canvasName = canvasName === undefined ? "hearts" : canvasName;
@@ -17,6 +18,8 @@ function Config({
     this.targetPercentFilled = targetPercentFilled === undefined ? 0.7 : targetPercentFilled;
     this.supportedFlags = ["Ukraine", "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual", "Lesbian"];
     this.whichFlag = whichFlag === undefined ? random(this.supportedFlags) : whichFlag;
+    this.inscribedHearts = true;
+    this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
     this.setSeed = function() {
@@ -45,6 +48,7 @@ function Config({
     this.targetAreaFilled = function() {
         return width * height * this.targetPercentFilled;
     }
+
 
 
     // Sources for pride flag hex colors:

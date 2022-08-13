@@ -42,9 +42,18 @@ function setup() {
     makeSlider("Target Percent Filled: ", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
 
 
+    let restartButton = createButton("restart");
+    restartButton.mouseClicked(() => {
+        shapes = [];
+        filledArea = 0;
+        updatePercentFilledP();
+        background(config.backgroundColor);
+    });
+
 
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
+    background(config.backgroundColor);
 }
 
 function recolorShapes() {
