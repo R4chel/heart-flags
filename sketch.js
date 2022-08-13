@@ -59,8 +59,7 @@ function setup() {
 function recolorShapes() {
     let colors = config.flagColors();
     for (let i = 0; i < shapes.length; i++) {
-        shapes[i].color = colorAtPoint(shapes[i].boundingCircle.x, shapes[i].boundingCircle.y, colors);
-    }
+        shapes[i].changeColors(colors); }
 }
 
 function updatePercentFilledP() {
