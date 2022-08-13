@@ -30,7 +30,6 @@ function setup() {
     flagSelect.selected(config.whichFlag);
     flagSelect.input(function() {
         config.setWhichFlag(flagSelect.value());
-        redraw();
     });
     let d = createDiv();
     percentFilledP = createP();
@@ -112,13 +111,11 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     slider.input(function() {
         setter.apply(config, [slider.value()]);
         textBox.value(slider.value());
-        redraw();
     });
     textBox.input(function() {
         let value = parseFloat(textBox.value());
         setter.apply(config, [value]);
         slider.value(value);
-        redraw();
     });
     d.child(label);
     d.child(slider);
