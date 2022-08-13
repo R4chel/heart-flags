@@ -15,7 +15,8 @@ function setup() {
     });
     config.setSeed();
 
-    createCanvas(config.canvasWidth, config.canvasHeight);
+    let canvas = createCanvas(config.canvasWidth, config.canvasHeight);
+    canvas.mouseClicked(canvasMouseClicked);
     colorMode(RGB, 255, 255, 255, 1);
     angleMode(RADIANS);
     ellipseMode(RADIUS);
@@ -28,8 +29,9 @@ function setup() {
         flagSelect.option(config.supportedFlags[i]);
     }
     flagSelect.selected(config.whichFlag);
-    flagSelect.input(function() {
+    flagSelect.input(() => {
         config.setWhichFlag(flagSelect.value());
+        recolorShapes();
     });
     let d = createDiv();
     percentFilledP = createP();
@@ -45,6 +47,13 @@ function setup() {
     saveButton.mouseClicked(saveArt);
 }
 
+function recolorShapes() {
+    let colors = config.flagColors();
+    for (let i = 0; i < shapes.length; i++) {
+        shapes[i].color = colorAtPoint(shapes[i].boundingCircle.x, shapes[i].boundingCircle.y, colors);
+    }
+}
+
 function updatePercentFilledP() {
     percentFilled = filledArea / config.totalArea();
     percentFilledP.html("Current Perecent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
@@ -58,7 +67,9 @@ function maybeSpawnShape(x, y) {
     return new Shape({
         x: x,
         y: y,
-        r: r
+        r: r,
+        inscribed: random() < 0.5,
+        color: colorAtPoint(x, y)
     });
 }
 
@@ -123,14 +134,14 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     return slider;
 }
 
-function colorAtPoint(x, y) {
-    let colors = config.flagColors();
+function colorAtPoint(x, y, colors) {
+    colors = colors === undefined ? config.flagColors() : colors;
     let index = floor(y * colors.length / config.canvasHeight);
     return colors[index];
 }
 
-function mouseClicked(){
-    maybeAddShape(mouseX,mouseY);
+function canvasMouseClicked() {
+    maybeAddShape(mouseX, mouseY);
 }
 
 
@@ -139,7 +150,7 @@ function draw() {
 
     for (let i = 0; i < shapes.length; i++) {
         let shape = shapes[i];
-        shape.display(colorAtPoint);
+        shape.display();
     }
     if (config.targetPercentFilled > percentFilled) {
         maybeAddShape();

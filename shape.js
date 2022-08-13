@@ -4,19 +4,20 @@ function Shape({
     x,
     y,
     r,
+    color,
     inscribed = false
 }) {
     this.boundingCircle = {
         x: x,
         y: y,
         r: r
+        
     };
     this.points = computePoints(this.boundingCircle, inscribed);
+    this.color = color;
 
-    this.display = function(f_color) {
-        let c = f_color(this.boundingCircle.x,this.boundingCircle.y);
-        
-        fill(c);
+    this.display = function() {
+        fill(this.color);
         beginShape();
         for (let i = 0; i < this.points.length; i++) {
             let p = this.points[i];
