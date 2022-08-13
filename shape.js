@@ -39,7 +39,6 @@ function Shape({
         colorIndex++;
         for(let j = 0; j < this.levels * this.colors.length; j++){
             let points = this.nested[j].points;
-            stroke(this.colors[(colorIndex + 1) % this.colors.length]);
             fill(this.colors[colorIndex % this.colors.length]);
             beginShape();
             for (let i = 0; i < points.length; i++) {

@@ -79,7 +79,7 @@ function maybeSpawnShape(x, y) {
         r: r,
         rotation : random(-config.maxRotation, config.maxRotation),
         inscribed: random() < 0.5,
-        levels : round(random(0,3)),
+        levels : round(random(0,2)),
         color: colorAtPoint(x, y),
         colors: config.flagColors(),
     });
