@@ -13,8 +13,8 @@ function Shape({
     };
     this.points = computePoints(this.boundingCircle, inscribed);
 
-    this.display = function() {
-
+    this.display = function(f_color) {
+        fill(f_color(this.x,this.y))
         beginShape();
         for (let i = 0; i < this.points.length; i++) {
             let p = this.points[i];

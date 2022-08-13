@@ -14,12 +14,25 @@ function setup() {
     config.setSeed();
 
     createCanvas(config.canvasWidth, config.canvasHeight);
-    colorMode(HSB, 360, 100, 100, 1);
+    colorMode(RGB, 255, 255, 255, 1);
     angleMode(RADIANS);
     ellipseMode(RADIUS);
 
 
-    let targetPercentFilledSlider = makeSlider("targetPercentFilled", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
+    console.debug(config);
+
+    let flagSelect = createSelect(false);
+    for(let i = 0; i < config.supportedFlags.length; i++){
+        flagSelect.option(config.supportedFlags[i]);
+    }
+    flagSelect.selected(config.whichFlag);
+    flagSelect.input(function () {
+        config.setWhichFlag(flagSelect.value());
+        redraw();
+    });
+
+    makeSlider("targetPercentFilled", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
+
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
 
@@ -86,18 +99,24 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
         setter.apply(config, [slider.value()]);
         textBox.value(slider.value());
         redraw();
-    })
+    });
     textBox.input(function () {
         let value = parseFloat(textBox.value());
         setter.apply(config, [value]);
         slider.value(value);
         redraw();
-    })
+    });
     d.child(label);
     d.child(slider);
     d.child(textBox);
     return slider;
 }
+
+function colorAtPoint(x,y) {
+
+}
+
+
 
 function draw() {
     console.debug(config.seed);
