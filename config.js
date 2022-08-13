@@ -17,7 +17,7 @@ function Config({
     this.maxPossibleRadius = maxPossibleRadius === undefined ? this.canvasHeight / 10 : maxPossibleRadius;
     this.allowTouchingEdges = false;
     this.targetPercentFilled = targetPercentFilled === undefined ? 0.7 : targetPercentFilled;
-    this.supportedFlags = ["Ukraine", "LGBT", "Pansexual", "Trans", "Non-binary"];
+    this.supportedFlags = ["Ukraine", "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual"];
     this.whichFlag = whichFlag === undefined ? random(this.supportedFlags) : whichFlag;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
@@ -45,6 +45,10 @@ function Config({
         return width * height * this.targetPercentFilled;
     }
 
+
+    // Sources for pride flag hex colors:
+    // https://www.kapwing.com/resources/official-pride-colors-2021-exact-color-codes-for-15-pride-flags/
+    // https://www.flagcolorcodes.com/flags/pride
     this.flagColors = function() {
         switch(this.whichFlag) {
         case "Ukraine": return [color(0, 91, 187, 1), color(255, 213, 0, 1), ];
@@ -55,6 +59,9 @@ function Config({
             return [color("#55CDFC"), color("#F7A8B8"), color("FFFFFF"), color("#F7A8B8"), color("#55CDFC")]
         case "Pansexual":
             return [color("#FF218C"), color("#FFD800"), color("#21B1FF")];
+        case "Bisexual":
+            return [color("#D60270"),color("#D60270"),color("#9B4F96"),color("#0038A8"),color("#0038A8")];
+
         case "LGBT":
         default:
             return [color("#FF0018"), color("#FFA52C"), color("#FFFF41"), color("#008018"), color("#0000F9"), color("#86007D")]
