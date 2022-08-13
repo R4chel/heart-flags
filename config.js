@@ -1,11 +1,13 @@
 function Config({
     debug,
+    seed,
     canvasWidth,
     canvasHeight,
     numShapes,
     canvasName,
-    seed,
-    maxPossibleRadius
+    maxPossibleRadius,
+    targetPercentFilled,
+
 }) {
     this.debug = debug === undefined ? false : debug;
     this.canvasName = canvasName === undefined ? "hearts" : canvasName;
@@ -14,6 +16,7 @@ function Config({
     this.numShapes = numShapes === undefined ? 10 : numShapes;
     this.maxPossibleRadius = maxPossibleRadius === undefined ? this.canvasHeight / 10 : maxPossibleRadius;
     this.allowTouchingEdges = false;
+    this.targetPercentFilled = targetPercentFilled === undefined ? 0.7 : targetPercentFilled;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
     this.setSeed = function() {
@@ -21,5 +24,16 @@ function Config({
             this.seed = round(random(1000000));
         }
         randomSeed(this.seed);
+    }
+
+    this.getTargetPercentFilled = function () {
+        return this.targetPercentFilled;
+    }
+    this.setTargetPercentFilled = function (targetPercentFilled) {
+        this.targetPercentFilled = targetPercentFilled;
+    }
+
+    this.targetAreaFilled = function() {
+        return width * height * this.targetPercentFilled;
     }
 }

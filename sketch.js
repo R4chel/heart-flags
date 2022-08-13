@@ -5,6 +5,7 @@ let seed;
 let latestGitVersion;
 let shapes = [];
 let config;
+let filledArea = 0;
 
 function setup() {
     config = new Config({
@@ -17,22 +18,21 @@ function setup() {
     angleMode(RADIANS);
     ellipseMode(RADIUS);
 
+
+    let targetPercentFilledSlider = makeSlider("targetPercentFilled", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
 
 
     for (let i = 0; i < config.numShapes; i++) {
-        let maybe = maybeSpawnShape(config);
-        if(maybe != -1){
-            shapes.push(maybe);
-        }
+        maybeAddShape(config);
     } 
 }
 
-function maybeSpawnShape(config) {
+function maybeSpawnShape() {
     let x = floor(random(width));
     let y = floor(random(height));
-    let r = maxRadius(config, x, y);
+    let r = maxRadius(x, y);
     
     if (r === -1) {
         return -1;
@@ -40,8 +40,14 @@ function maybeSpawnShape(config) {
     return new Shape({x:x, y:y, r:r});
 }
 
-
-function maxRadius(config, x, y) {
+function maybeAddShape(){
+    let maybe = maybeSpawnShape();
+    if(maybe != -1){
+        filledArea +=  PI * maybe.boundingCircle.r ** 2;
+        shapes.push(maybe);
+    }
+}
+function maxRadius(x, y) {
     let m = config.maxPossibleRadius;
     if (!config.allowTouchingEdge) {
         let distanceToEdge = min(x, width - x, y, height- y);
@@ -65,11 +71,42 @@ function saveArt() {
     saveCanvas(canvas, name, "png");
 }
 
+
+function makeSlider(name, minimum, maximum, delta, getter, setter) {
+    let d = createDiv();
+
+    let label = createElement("label");
+    let textBox = createInput(getter.apply(config), "number");
+    textBox.style("width", "100px");
+    textBox.attribute("step", delta);
+    let slider = createSlider(minimum, maximum, getter.apply(config), delta);
+    label.html(name);
+    label.attribute("for", slider.id());
+    slider.input(function () {
+        setter.apply(config, [slider.value()]);
+        textBox.value(slider.value());
+        redraw();
+    })
+    textBox.input(function () {
+        let value = parseFloat(textBox.value());
+        setter.apply(config, [value]);
+        slider.value(value);
+        redraw();
+    })
+    d.child(label);
+    d.child(slider);
+    d.child(textBox);
+    return slider;
+}
+
 function draw() {
     console.debug(config.seed);
 
     for (let i = 0; i < shapes.length; i++) {
         let shape = shapes[i];
         shape.display();
+    }
+    if(config.targetAreaFilled() > filledArea){
+        maybeAddShape();
     }
 }
