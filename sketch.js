@@ -24,11 +24,11 @@ function setup() {
     console.debug(config);
 
     let flagSelect = createSelect(false);
-    for(let i = 0; i < config.supportedFlags.length; i++){
+    for (let i = 0; i < config.supportedFlags.length; i++) {
         flagSelect.option(config.supportedFlags[i]);
     }
     flagSelect.selected(config.whichFlag);
-    flagSelect.input(function () {
+    flagSelect.input(function() {
         config.setWhichFlag(flagSelect.value());
         redraw();
     });
@@ -36,43 +36,48 @@ function setup() {
     percentFilledP = createP();
     updatePercentFilledP();
 
-    
+
 
     makeSlider("Target Percent Filled: ", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
 
-    
+
 
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
 }
 
-function updatePercentFilledP(){
+function updatePercentFilledP() {
     percentFilled = filledArea / config.totalArea();
-    percentFilledP.html("Current Perecent Filled: " + parseFloat(percentFilled*100).toFixed(2)+"%");
+    percentFilledP.html("Current Perecent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
-function maybeSpawnShape() {
-    let x = floor(random(width));
-    let y = floor(random(height));
+
+function maybeSpawnShape(x, y) {
     let r = maxRadius(x, y);
-    
     if (r === -1) {
         return -1;
     }
-    return new Shape({x:x, y:y, r:r});
+    return new Shape({
+        x: x,
+        y: y,
+        r: r
+    });
 }
 
-function maybeAddShape(){
-    let maybe = maybeSpawnShape();
-    if(maybe != -1){
-        filledArea +=  PI * maybe.boundingCircle.r ** 2;
+function maybeAddShape(x, y) {
+    x = x === undefined ? floor(random(width)) : x;
+    y = y === undefined ? floor(random(height)) : y;
+    let maybe = maybeSpawnShape(x, y);
+    if (maybe != -1) {
+        filledArea += PI * maybe.boundingCircle.r ** 2;
         shapes.push(maybe);
         updatePercentFilledP();
     }
 }
+
 function maxRadius(x, y) {
     let m = config.maxPossibleRadius;
     if (!config.allowTouchingEdge) {
-        let distanceToEdge = min(x, width - x, y, height- y);
+        let distanceToEdge = min(x, width - x, y, height - y);
         m = min(m, distanceToEdge);
     }
     for (let i = 0; i < shapes.length; i++) {
@@ -104,12 +109,12 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     let slider = createSlider(minimum, maximum, getter.apply(config), delta);
     label.html(name);
     label.attribute("for", slider.id());
-    slider.input(function () {
+    slider.input(function() {
         setter.apply(config, [slider.value()]);
         textBox.value(slider.value());
         redraw();
     });
-    textBox.input(function () {
+    textBox.input(function() {
         let value = parseFloat(textBox.value());
         setter.apply(config, [value]);
         slider.value(value);
@@ -121,12 +126,15 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     return slider;
 }
 
-function colorAtPoint(x,y) {
+function colorAtPoint(x, y) {
     let colors = config.flagColors();
-    let index = floor(y * colors.length/ config.canvasHeight);
+    let index = floor(y * colors.length / config.canvasHeight);
     return colors[index];
 }
 
+function mouseClicked(){
+    maybeAddShape(mouseX,mouseY);
+}
 
 
 function draw() {
@@ -136,7 +144,7 @@ function draw() {
         let shape = shapes[i];
         shape.display(colorAtPoint);
     }
-    if(config.targetPercentFilled > percentFilled){
+    if (config.targetPercentFilled > percentFilled) {
         maybeAddShape();
     }
 }
