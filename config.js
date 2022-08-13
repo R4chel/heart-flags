@@ -8,6 +8,7 @@ function Config({
     targetPercentFilled,
     whichFlag,
     backgroundColor,
+    maxRotation,
 }) {
     this.debug = debug === undefined ? false : debug;
     this.canvasName = canvasName === undefined ? "hearts" : canvasName;
@@ -20,6 +21,7 @@ function Config({
     this.whichFlag = whichFlag === undefined ? random(this.supportedFlags) : whichFlag;
     this.inscribedHearts = true;
     this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
+    this.maxRotation = maxRotation === undefined ? PI /10 : maxRotation;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
     this.setSeed = function() {

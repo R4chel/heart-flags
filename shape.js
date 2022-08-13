@@ -5,6 +5,7 @@ function Shape({
     y,
     r,
     color,
+    rotation,
     inscribed = false
 }) {
     this.boundingCircle = {
@@ -13,10 +14,11 @@ function Shape({
         r: r
         
     };
-    this.points = computePoints(this.boundingCircle, inscribed);
+    this.points = computePoints(this.boundingCircle, inscribed, rotation);
     this.color = color;
 
     this.display = function() {
+        
         fill(this.color);
         beginShape();
         for (let i = 0; i < this.points.length; i++) {
@@ -27,9 +29,9 @@ function Shape({
     }
 }
 
-function computePoints(boundingCircle, inscribed){
+function computePoints(boundingCircle, inscribed, rotation){
     let points = fancyHeartPoints(boundingCircle, inscribed);
-    return rotatePoints(boundingCircle, points, PI);
+    return rotatePoints(boundingCircle, points, PI + rotation);
 
 }
 

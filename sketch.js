@@ -77,6 +77,7 @@ function maybeSpawnShape(x, y) {
         x: x,
         y: y,
         r: r,
+        rotation : random(-config.maxRotation, config.maxRotation),
         inscribed: random() < 0.5,
         color: colorAtPoint(x, y)
     });
@@ -111,9 +112,9 @@ function maxRadius(x, y) {
 }
 
 function saveArt() {
-    console.log("saved");
+    console.debug("saved");
     let name =
-        config.canvasName + "--seed-" + config.seed;
+        config.canvasName + "--" + config.whichFlag.replace(/([^a-z0-9]+)/gi, '-');
     saveCanvas(canvas, name, "png");
 }
 
