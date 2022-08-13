@@ -26,9 +26,18 @@ function Shape({
     this.nested = computeNestedPoints(this.boundingCircle, this.points,this.colors,this.levels);
 
     this.display = function() {
-        console.log(height);
-        let colorIndex = this.colorIndex + this.colors.length*(this.levels+1);
-        for(let j = this.levels * this.colors.length; j >0; j--){
+        let colorIndex = this.colorIndex;
+        stroke(this.colors[(colorIndex + 1) % this.colors.length]);
+        fill(this.colors[colorIndex]);
+        beginShape();
+        for (let i = 0; i < this.points.length; i++) {
+            let p = this.points[i];
+            curveVertex(p.x, p.y); 
+        }
+        endShape(CLOSE);
+
+        colorIndex++;
+        for(let j = 0; j < this.levels * this.colors.length; j++){
             let points = this.nested[j].points;
             stroke(this.colors[(colorIndex + 1) % this.colors.length]);
             fill(this.colors[colorIndex % this.colors.length]);
@@ -39,19 +48,9 @@ function Shape({
             }
             endShape(CLOSE);
 
-            colorIndex--;
+            colorIndex++;
 
         }
-
-        stroke(this.colors[(colorIndex + 1) % this.colors.length]);
-        fill(this.colors[colorIndex % this.colors.length]);
-        beginShape();
-        for (let i = 0; i < this.points.length; i++) {
-            let p = this.points[i];
-            curveVertex(p.x, p.y); 
-        }
-        endShape(CLOSE);
-
     }
 }
 
