@@ -33,6 +33,9 @@ function Shape({
     }
 
     this.display = function() {
+        push();
+        translate(this.boundingCircle.x, this.boundingCircle.y);
+
         let colorIndex = this.colorIndex;
         stroke(this.colors[(colorIndex + 1) % this.colors.length]);
         fill(this.colors[colorIndex]);
@@ -57,24 +60,30 @@ function Shape({
             colorIndex++;
 
         }
+        pop();
+
+        noFill();
+        stroke("red");
+        circle(this.boundingCircle.x,this.boundingCircle.y, this.boundingCircle.r);
     }
+
 }
 
 function computePoints(boundingCircle, inscribed, rotation) {
     let points = fancyHeartPoints(boundingCircle, inscribed);
-    return rotatePoints(boundingCircle, points, PI + rotation);
+    return rotatePoints(points, PI + rotation);
 
 }
 
 function fancyHeartPoints(boundingCircle, inscribed) {
     let radiusRatio = inscribed ? 1.45 : 2.5;
     let r = boundingCircle.r / radiusRatio;
-    let x = boundingCircle.x;
-    let y = boundingCircle.y + 1.42 * r;
+    let x = 0;
+    let y = 1.42 * r;
     return polarShapePoints({
         r: r,
         x: x,
-        y: y
+        y: y,
     }, fancyHeart);
 }
 
@@ -91,8 +100,8 @@ function polarShapePoints(circle, f) {
     for (let i = 0; i < NUM_POINTS; i++) {
         let theta = (i * 2 * PI) / NUM_POINTS;
         let amplitude = f(circle.r, theta);
-        let x = amplitude * cos(theta) + circle.x;
-        let y = amplitude * sin(theta) + circle.y;
+        let x = amplitude * cos(theta) ;
+        let y = amplitude * sin(theta) ;
         points.push({
             x: x,
             y: y
@@ -101,42 +110,37 @@ function polarShapePoints(circle, f) {
     return points;
 }
 
-function rotatePoints(boundingCircle, points, theta) {
+function rotatePoints(points, theta) {
     let rotatedPoints = [];
-    let bx = boundingCircle.x;
-    let by = boundingCircle.y;
     for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        let px = p.x - bx;
-        let py = p.y - by;
+        let px = p.x ;
+        let py = p.y ;
         let x = px * Math.cos(theta) - py * Math.sin(theta);
         let y = px * Math.sin(theta) + py * Math.cos(theta);
         rotatedPoints.push({
-            x: x + bx,
-            y: y + by
+            x: x ,
+            y: y
         });
     }
     return rotatedPoints;
 }
 
-function scalePoints(boundingCircle, points, scalar) {
+function scalePoints(points, scalar) {
     let scaledPoints = [];
-    let bx = boundingCircle.x;
-    let by = boundingCircle.y;
-    let br = boundingCircle.r;
-
     for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        let px = p.x - bx;
-        let py = p.y - by;
+        let px = p.x ;
+        let py = p.y ;
         let x = px * scalar;
         let y = py * scalar;
         scaledPoints.push({
-            x: x + bx,
-            y: y + by
+            x: x ,
+            y: y 
         });
     }
     return scaledPoints;
+
 }
 
 function computeNestedPoints(boundingCircle, points, colors, levels) {
@@ -144,7 +148,7 @@ function computeNestedPoints(boundingCircle, points, colors, levels) {
     let scalar = CONCENTRIC_FACTOR;
     while (nested.length <= levels * colors.length) {
         nested.push({
-            points: scalePoints(boundingCircle, points, scalar)
+            points: scalePoints(points, scalar)
         });
         scalar *= CONCENTRIC_FACTOR;
     }

@@ -64,7 +64,7 @@ function recolorShapes() {
 
 function updatePercentFilledP() {
     percentFilled = filledArea / config.totalArea();
-    percentFilledP.html("Current Perecent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
+    percentFilledP.html("Current Approx` Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
 
 function maybeSpawnShape(x, y) {
@@ -77,7 +77,8 @@ function maybeSpawnShape(x, y) {
         y: y,
         r: r,
         rotation : random(-config.maxRotation, config.maxRotation),
-        inscribed: random() < 0.5,
+        inscribed : false,
+        // inscribed: random() < 0.5,
         levels : round(random(0,2)),
         color: colorAtPoint(x, y),
         colors: config.flagColors(),
