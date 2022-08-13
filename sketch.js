@@ -6,6 +6,8 @@ let latestGitVersion;
 let shapes = [];
 let config;
 let filledArea = 0;
+let percentFilled = 0;
+let percentFilledP;
 
 function setup() {
     config = new Config({
@@ -30,18 +32,24 @@ function setup() {
         config.setWhichFlag(flagSelect.value());
         redraw();
     });
+    let d = createDiv();
+    percentFilledP = createP();
+    updatePercentFilledP();
 
-    makeSlider("targetPercentFilled", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
+    
+
+    makeSlider("Target Percent Filled: ", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
+
+    
 
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
-
-
-    for (let i = 0; i < config.numShapes; i++) {
-        maybeAddShape(config);
-    } 
 }
 
+function updatePercentFilledP(){
+    percentFilled = filledArea / config.totalArea();
+    percentFilledP.html("Current Perecent Filled: " + parseFloat(percentFilled*100).toFixed(2)+"%");
+}
 function maybeSpawnShape() {
     let x = floor(random(width));
     let y = floor(random(height));
@@ -58,6 +66,7 @@ function maybeAddShape(){
     if(maybe != -1){
         filledArea +=  PI * maybe.boundingCircle.r ** 2;
         shapes.push(maybe);
+        updatePercentFilledP();
     }
 }
 function maxRadius(x, y) {
@@ -127,7 +136,7 @@ function draw() {
         let shape = shapes[i];
         shape.display(colorAtPoint);
     }
-    if(config.targetAreaFilled() > filledArea){
+    if(config.targetPercentFilled > percentFilled){
         maybeAddShape();
     }
 }

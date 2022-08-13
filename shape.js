@@ -31,6 +31,7 @@ function computePoints(boundingCircle, inscribed){
     return rotatePoints(boundingCircle, points, PI);
 
 }
+
 function fancyHeartPoints(boundingCircle, inscribed) {
     let radiusRatio = inscribed ? 1.45 : 2.5;
     let r = boundingCircle.r / radiusRatio;
