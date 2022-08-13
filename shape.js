@@ -1,10 +1,13 @@
 NUM_POINTS = 400;
+CONCENTRIC_FACTOR = 0.7;
 
 function Shape({
     x,
     y,
     r,
     color,
+    colors,
+    levels, 
     rotation,
     inscribed = false
 }) {
@@ -16,16 +19,39 @@ function Shape({
     };
     this.points = computePoints(this.boundingCircle, inscribed, rotation);
     this.color = color;
+    
+    this.colors = colors;
+    this.colorIndex = floor(y * colors.length / height);
+    this.levels = levels;
+    this.nested = computeNestedPoints(this.boundingCircle, this.points,this.colors,this.levels);
 
     this.display = function() {
-        
-        fill(this.color);
+        console.log(height);
+        let colorIndex = this.colorIndex + this.colors.length*(this.levels+1);
+        for(let j = this.levels * this.colors.length; j >0; j--){
+            let points = this.nested[j].points;
+            stroke(this.colors[(colorIndex + 1) % this.colors.length]);
+            fill(this.colors[colorIndex % this.colors.length]);
+            beginShape();
+            for (let i = 0; i < points.length; i++) {
+                let p = points[i];
+                curveVertex(p.x, p.y); 
+            }
+            endShape(CLOSE);
+
+            colorIndex--;
+
+        }
+
+        stroke(this.colors[(colorIndex + 1) % this.colors.length]);
+        fill(this.colors[colorIndex % this.colors.length]);
         beginShape();
         for (let i = 0; i < this.points.length; i++) {
             let p = this.points[i];
             curveVertex(p.x, p.y); 
         }
         endShape(CLOSE);
+
     }
 }
 
@@ -83,4 +109,32 @@ function rotatePoints(boundingCircle, points, theta) {
         rotatedPoints.push({x: x + bx, y: y + by});
     }
     return rotatedPoints;
+}
+
+function scalePoints(boundingCircle, points, scalar) {
+    let scaledPoints = [];
+    let bx = boundingCircle.x;
+    let by = boundingCircle.y;
+    let br = boundingCircle.r;
+
+    for (let i = 0; i < points.length; i++) {
+        let p = points[i];
+        let px = p.x - bx;
+        let py = p.y - by;
+        let x = px * scalar;
+        let y = py * scalar;
+        scaledPoints.push({x: x + bx, y: y + by});
+    }
+    return scaledPoints;
+}
+
+function computeNestedPoints(boundingCircle, points, colors,levels) {
+    let nested = [];
+    let scalar = CONCENTRIC_FACTOR;
+    while(nested.length <= levels * colors.length){
+        nested.push({points : scalePoints(boundingCircle, points, scalar)});
+        scalar *= CONCENTRIC_FACTOR;
+    }
+    return nested;
+
 }
