@@ -8,13 +8,12 @@ function Shape({
     colors,
     levels,
     rotation,
-    inscribed = false
+    inscribed
 }) {
     this.boundingCircle = {
         x: x,
         y: y,
         r: r
-
     };
     // pointsWithoutCenter are non-translated points
     this.pointsWithoutCenter = computePoints(this.boundingCircle, inscribed, rotation);
@@ -40,6 +39,7 @@ function Shape({
         if (this.dirty) {
 
             colorIndex = this.colorIndex;
+            strokeWeight(0.5);
             stroke(this.colors[(colorIndex + 1) % this.colors.length]);
             for (let j = 0; j < this.levels * this.colors.length + 1; j++) {
                 let points = this.nested[j].points;

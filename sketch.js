@@ -1,6 +1,6 @@
 // Global configs, set here to override default values
 let seed;
-MIN_RADIUS = 5;
+let MIN_RADIUS = 5;
 
 // GLOBAL DATA
 let latestGitVersion;
@@ -10,6 +10,9 @@ let filledArea = 0;
 let percentFilled = 0;
 let percentFilledP;
 let redrawBackground = true;
+
+// I put in global attempts so I could watch it in the debugger, because I was curious. It's fine to remove it. 
+let GLOBAL_ATTEMPTS = 0;
 
 function setup() {
     config = new Config({
@@ -57,6 +60,7 @@ function setup() {
         filledArea = 0;
         updatePercentFilledP();
         redrawBackground = true;
+        GLOBAL_ATTEMPTS = 0;
     });
 
 
@@ -77,14 +81,16 @@ function updatePercentFilledP() {
     percentFilledP.html("Current Approx Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
 
+// JITTER and BUFFER are about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
 JITTER = 5;
-function maybeSpawnShape(x, y, forced=false) {
+BUFFER = -2;
+
+function maybeSpawnShape(x, y, forced = false) {
     let r = maxRadius(x, y);
     if (r === -1 || r < MIN_RADIUS) {
-        if(forced){
-            r = round(random(MIN_RADIUS, 2*MIN_RADIUS+1));
-        }
-        else{
+        if (forced) {
+            r = round(random(MIN_RADIUS, 2 * MIN_RADIUS + 1));
+        } else {
             return -1;
         }
     }
@@ -93,15 +99,16 @@ function maybeSpawnShape(x, y, forced=false) {
         x: round(x + random(-JITTER, JITTER)),
         y: round(y + random(-JITTER, JITTER)),
         r: r,
-        rotation : random(-config.maxRotation, config.maxRotation),
-        inscribed: random() < 0.5,
-        levels : round(random(0,1)),
+        rotation: random(-config.maxRotation, config.maxRotation),
+        inscribed: random() < 0.75,
+        levels: round(random(0, 1)),
         color: colorAtPoint(x, y),
         colors: config.flagColors(),
     });
 }
 
-function maybeAddShape(x, y, forced=false) {
+function maybeAddShape(x, y, forced = false) {
+    GLOBAL_ATTEMPTS++;
     x = x === undefined ? floor(random(width)) : x;
     y = y === undefined ? floor(random(height)) : y;
     let maybe = maybeSpawnShape(x, y, forced);
@@ -121,10 +128,10 @@ function maxRadius(x, y) {
     for (let i = 0; i < shapes.length; i++) {
         let c = shapes[i].boundingCircle;
         let distance = dist(x, y, c.x, c.y);
-        if (distance < c.r) {
+        if (distance < c.r - BUFFER) {
             return -1;
         }
-        m = min([distance - c.r, m]);
+        m = min([distance - c.r - BUFFER, m]);
     }
     return m;
 }
@@ -141,7 +148,7 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     let d = createDiv();
 
     let label = createElement("label");
-    let textBox = createInput(getter.apply(config), "number");
+    let textBox = createInput((getter.apply(config)).toString(), "number");
     textBox.style("width", "100px");
     textBox.attribute("step", delta);
     let slider = createSlider(minimum, maximum, getter.apply(config), delta);
@@ -173,9 +180,10 @@ function canvasMouseClicked() {
 }
 
 SPEED = 100;
+
 function draw() {
     console.debug(config.seed);
-    if(redrawBackground){
+    if (redrawBackground) {
         background(config.backgroundColor);
         redrawBackground = false;
     }
@@ -185,7 +193,7 @@ function draw() {
         shape.display();
     }
     if (config.targetPercentFilled > percentFilled) {
-        for(let i = 0; i < SPEED; i++){
+        for (let i = 0; i < SPEED; i++) {
             maybeAddShape();
         }
     }
