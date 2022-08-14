@@ -15,13 +15,13 @@ function Config({
     this.canvasWidth = canvasWidth === undefined ? (debug ? 200 : windowWidth) : canvasWidth;
     this.canvasHeight = canvasHeight === undefined ? (debug ? 200 : windowHeight) : canvasHeight;
     this.maxPossibleRadius = maxPossibleRadius === undefined ? this.canvasHeight / 10 : maxPossibleRadius;
-    this.allowTouchingEdges = false;
-    this.targetPercentFilled = targetPercentFilled === undefined ? 0.7 : targetPercentFilled;
+    this.allowTouchingEdges = true;
+    this.targetPercentFilled = targetPercentFilled === undefined ? 0.95 : targetPercentFilled;
     this.countryFlags = [ "Ukraine" ];
     
     this.prideFlags = [ "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual", "Lesbian"];
     this.supportedFlags = this.countryFlags.concat(this.prideFlags);
-    this.inscribedHearts = true;
+    this.inscribed = true;
     this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
     this.maxRotation = maxRotation === undefined ? PI /10 : maxRotation;
     this.whichFlag = this.whichFlag;

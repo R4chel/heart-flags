@@ -27,8 +27,6 @@ function setup() {
     ellipseMode(RADIUS);
 
 
-    console.debug(config);
-
     let flagSelect = createSelect(false);
     for (let i = 0; i < config.countryFlags.length; i++) {
         flagSelect.option(config.countryFlags[i]);
@@ -49,11 +47,10 @@ function setup() {
     percentFilledP = createP();
     updatePercentFilledP();
 
-
-
     makeSlider("Target Percent Filled: ", 0, 1, 0.05, config.getTargetPercentFilled, config.setTargetPercentFilled);
 
 
+    
     let restartButton = createButton("restart");
     restartButton.mouseClicked(() => {
         shapes = [];
@@ -62,7 +59,6 @@ function setup() {
         redrawBackground = true;
         GLOBAL_ATTEMPTS = 0;
     });
-
 
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
@@ -81,15 +77,16 @@ function updatePercentFilledP() {
     percentFilledP.html("Current Approx Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
 
-// JITTER and BUFFER are about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
+// JITTER is about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
+// TODO: Jitter, and min_radius are all configurations. Maybe they could go in the config file??  Also how many levels
 JITTER = 5;
-BUFFER = -2;
 
 function maybeSpawnShape(x, y, forced = false) {
     let r = maxRadius(x, y);
     if (r === -1 || r < MIN_RADIUS) {
         if (forced) {
-            r = round(random(MIN_RADIUS, 2 * MIN_RADIUS + 1));
+            r = round(random(MIN_RADIUS/2, MIN_RADIUS*5));
+            r = constrain(r, MIN_RADIUS, config.maxPossibleRadius);
         } else {
             return -1;
         }
@@ -100,7 +97,7 @@ function maybeSpawnShape(x, y, forced = false) {
         y: round(y + random(-JITTER, JITTER)),
         r: r,
         rotation: random(-config.maxRotation, config.maxRotation),
-        inscribed: random() < 0.75,
+        inscribed: config.inscribed,
         levels: round(random(0, 1)),
         color: colorAtPoint(x, y),
         colors: config.flagColors(),
@@ -128,10 +125,10 @@ function maxRadius(x, y) {
     for (let i = 0; i < shapes.length; i++) {
         let c = shapes[i].boundingCircle;
         let distance = dist(x, y, c.x, c.y);
-        if (distance < c.r - BUFFER) {
+        if (distance < c.r) {
             return -1;
         }
-        m = min([distance - c.r - BUFFER, m]);
+        m = min([distance - c.r, m]);
     }
     return m;
 }
@@ -167,6 +164,23 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     d.child(slider);
     d.child(textBox);
     return slider;
+}
+
+function makeCheckbox(name, getter, setter) {
+    let d = createDiv();
+
+    let label = createElement("label");
+    let checkbox = createCheckbox(name, getter());
+    checkbox.changed(function() {
+        setter(checkbox.checked());
+        redraw();
+    })
+    label.html(name);
+    label.attribute("for", checkbox.id());
+
+    d.child(label);
+    d.child(checkbox);
+    return checkbox;
 }
 
 function colorAtPoint(x, y, colors) {
