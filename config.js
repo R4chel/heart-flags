@@ -20,7 +20,7 @@ function Config({
     this.countryFlags = [ "Ukraine" ];
     
     this.prideFlags = [ "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual", "Lesbian"];
-    this.supportedFlags = this.countryFlags + this.prideFlags;
+    this.supportedFlags = this.countryFlags.concat(this.prideFlags);
     this.inscribedHearts = true;
     this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
     this.maxRotation = maxRotation === undefined ? PI /10 : maxRotation;

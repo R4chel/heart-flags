@@ -1,5 +1,5 @@
 // Global configs, set here to override default values
-let seed = 0;
+let seed;
 MIN_RADIUS = 5;
 
 // GLOBAL DATA
@@ -32,11 +32,11 @@ function setup() {
     let selectDivider = "---------";
 
     flagSelect.option(selectDivider);
-    flagSelect.disable(selectDivider);
     for (let i = 0; i < config.prideFlags.length; i++) {
         flagSelect.option(config.prideFlags[i]);
     }
     flagSelect.selected(config.whichFlag);
+    flagSelect.disable(selectDivider);
     flagSelect.input(() => {
         config.setWhichFlag(flagSelect.value());
         recolorShapes();
