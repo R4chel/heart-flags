@@ -1,5 +1,6 @@
 // Global configs, set here to override default values
 let seed = 0;
+MIN_RADIUS = 5;
 
 // GLOBAL DATA
 let latestGitVersion;
@@ -64,22 +65,21 @@ function recolorShapes() {
 
 function updatePercentFilledP() {
     percentFilled = filledArea / config.totalArea();
-    percentFilledP.html("Current Approx` Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
+    percentFilledP.html("Current Approx Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
-
+JITTER = 5;
 function maybeSpawnShape(x, y) {
     let r = maxRadius(x, y);
-    if (r === -1) {
+    if (r === -1 || r < MIN_RADIUS) {
         return -1;
     }
     return new Shape({
-        x: x,
-        y: y,
+        x: round(x + random(-JITTER, JITTER)),
+        y: round(y + random(-JITTER, JITTER)),
         r: r,
         rotation : random(-config.maxRotation, config.maxRotation),
-        inscribed : false,
-        // inscribed: random() < 0.5,
-        levels : round(random(0,2)),
+        inscribed: random() < 0.5,
+        levels : round(random(0,1)),
         color: colorAtPoint(x, y),
         colors: config.flagColors(),
     });
