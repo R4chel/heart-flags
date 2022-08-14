@@ -24,14 +24,16 @@ function Shape({
     this.colorIndex = floor(this.boundingCircle.y * colors.length / height);
     this.levels = levels;
     this.nested = computeNestedPoints(this.boundingCircle, this.pointsWithoutCenter, this.colors, this.levels);
-        
+
 
     this.changeColors = function(colors) {
         this.colors = colors;
         this.colorIndex = floor(this.boundingCircle.y * this.colors.length / height);
-        while(this.nested.length <= this.levels * this.colors.length){
-            this.nested.push({points : scaleAndTranslatePoints(this.boundingCircle, this.pointsWithoutCenter, CONCENTRIC_FACTOR ** (this.nested.length + 1))});
-            
+        while (this.nested.length <= this.levels * this.colors.length) {
+            this.nested.push({
+                points: scaleAndTranslatePoints(this.boundingCircle, this.pointsWithoutCenter, CONCENTRIC_FACTOR ** (this.nested.length + 1))
+            });
+
         }
     }
 
@@ -48,7 +50,11 @@ function Shape({
             }
             endShape(CLOSE);
 
+            // only draw an outline around the largest shape
+            noStroke();
+
             colorIndex++;
+
 
         }
 
@@ -90,8 +96,8 @@ function polarShapePoints(circle, f) {
     for (let i = 0; i < NUM_POINTS; i++) {
         let theta = (i * 2 * PI) / NUM_POINTS;
         let amplitude = f(circle.r, theta);
-        let x = amplitude * cos(theta) ;
-        let y = amplitude * sin(theta) ;
+        let x = amplitude * cos(theta);
+        let y = amplitude * sin(theta);
         points.push({
             // This is not actually adding the center but the offset from the center
             x: x + circle.x,
@@ -105,12 +111,12 @@ function rotatePoints(points, theta) {
     let rotatedPoints = [];
     for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        let px = p.x ;
-        let py = p.y ;
+        let px = p.x;
+        let py = p.y;
         let x = px * Math.cos(theta) - py * Math.sin(theta);
         let y = px * Math.sin(theta) + py * Math.cos(theta);
         rotatedPoints.push({
-            x: x ,
+            x: x,
             y: y
         });
     }
@@ -121,8 +127,8 @@ function scaleAndTranslatePoints(boundingCircle, points, scalar) {
     let scaledPoints = [];
     for (let i = 0; i < points.length; i++) {
         let p = points[i];
-        let px = p.x ;
-        let py = p.y ;
+        let px = p.x;
+        let py = p.y;
         let x = px * scalar;
         let y = py * scalar;
         scaledPoints.push({
