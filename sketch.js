@@ -9,6 +9,7 @@ let config;
 let filledArea = 0;
 let percentFilled = 0;
 let percentFilledP;
+let redrawBackground = true;
 
 function setup() {
     config = new Config({
@@ -55,31 +56,39 @@ function setup() {
         shapes = [];
         filledArea = 0;
         updatePercentFilledP();
-        background(config.backgroundColor);
+        redrawBackground = true;
     });
 
 
     let saveButton = createButton("save");
     saveButton.mouseClicked(saveArt);
-    background(config.backgroundColor);
 }
 
 function recolorShapes() {
     let colors = config.flagColors();
     for (let i = 0; i < shapes.length; i++) {
-        shapes[i].changeColors(colors); }
+        shapes[i].changeColors(colors);
+    }
+    redrawBackground = true;
 }
 
 function updatePercentFilledP() {
     percentFilled = filledArea / config.totalArea();
     percentFilledP.html("Current Approx Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
+
 JITTER = 5;
-function maybeSpawnShape(x, y) {
+function maybeSpawnShape(x, y, forced=false) {
     let r = maxRadius(x, y);
     if (r === -1 || r < MIN_RADIUS) {
-        return -1;
+        if(forced){
+            r = round(random(MIN_RADIUS, 2*MIN_RADIUS+1));
+        }
+        else{
+            return -1;
+        }
     }
+
     return new Shape({
         x: round(x + random(-JITTER, JITTER)),
         y: round(y + random(-JITTER, JITTER)),
@@ -92,10 +101,10 @@ function maybeSpawnShape(x, y) {
     });
 }
 
-function maybeAddShape(x, y) {
+function maybeAddShape(x, y, forced=false) {
     x = x === undefined ? floor(random(width)) : x;
     y = y === undefined ? floor(random(height)) : y;
-    let maybe = maybeSpawnShape(x, y);
+    let maybe = maybeSpawnShape(x, y, forced);
     if (maybe != -1) {
         filledArea += PI * maybe.boundingCircle.r ** 2;
         shapes.push(maybe);
@@ -160,12 +169,16 @@ function colorAtPoint(x, y, colors) {
 }
 
 function canvasMouseClicked() {
-    maybeAddShape(mouseX, mouseY);
+    maybeAddShape(mouseX, mouseY, true);
 }
 
 SPEED = 100;
 function draw() {
     console.debug(config.seed);
+    if(redrawBackground){
+        background(config.backgroundColor);
+        redrawBackground = false;
+    }
 
     for (let i = 0; i < shapes.length; i++) {
         let shape = shapes[i];
@@ -173,7 +186,6 @@ function draw() {
     }
     if (config.targetPercentFilled > percentFilled) {
         for(let i = 0; i < SPEED; i++){
-            
             maybeAddShape();
         }
     }

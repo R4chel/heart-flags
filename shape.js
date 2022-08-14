@@ -18,13 +18,11 @@ function Shape({
     };
     // pointsWithoutCenter are non-translated points
     this.pointsWithoutCenter = computePoints(this.boundingCircle, inscribed, rotation);
-    this.color = color;
-
     this.colors = colors;
     this.colorIndex = floor(this.boundingCircle.y * colors.length / height);
     this.levels = levels;
     this.nested = computeNestedPoints(this.boundingCircle, this.pointsWithoutCenter, this.colors, this.levels);
-
+    this.dirty = true;
 
     this.changeColors = function(colors) {
         this.colors = colors;
@@ -35,32 +33,36 @@ function Shape({
             });
 
         }
+        this.dirty = true;
     }
 
     this.display = function() {
-        let colorIndex = this.colorIndex;
-        stroke(this.colors[(colorIndex + 1) % this.colors.length]);
-        for (let j = 0; j < this.levels * this.colors.length + 1; j++) {
-            let points = this.nested[j].points;
-            fill(this.colors[colorIndex % this.colors.length]);
-            beginShape();
-            for (let i = 0; i < points.length; i++) {
-                let p = points[i];
-                curveVertex(p.x, p.y);
+        if (this.dirty) {
+
+            colorIndex = this.colorIndex;
+            stroke(this.colors[(colorIndex + 1) % this.colors.length]);
+            for (let j = 0; j < this.levels * this.colors.length + 1; j++) {
+                let points = this.nested[j].points;
+                fill(this.colors[colorIndex % this.colors.length]);
+                beginShape();
+                for (let i = 0; i < points.length; i++) {
+                    let p = points[i];
+                    curveVertex(p.x, p.y);
+                }
+                endShape(CLOSE);
+
+                // only draw an outline around the largest shape
+                noStroke();
+
+                colorIndex++;
+
+
             }
-            endShape(CLOSE);
-
-            // only draw an outline around the largest shape
-            noStroke();
-
-            colorIndex++;
-
-
+            // noFill();
+            // stroke("red");
+            // circle(this.boundingCircle.x,this.boundingCircle.y, this.boundingCircle.r);
         }
-
-        // noFill();
-        // stroke("red");
-        // circle(this.boundingCircle.x,this.boundingCircle.y, this.boundingCircle.r);
+        this.dirty = false;
     }
 
 }
@@ -68,7 +70,6 @@ function Shape({
 function computePoints(boundingCircle, inscribed, rotation) {
     let points = fancyHeartPoints(boundingCircle, inscribed);
     return rotatePoints(points, PI + rotation);
-
 }
 
 function fancyHeartPoints(boundingCircle, inscribed) {
