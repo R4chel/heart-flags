@@ -26,8 +26,15 @@ function setup() {
     console.debug(config);
 
     let flagSelect = createSelect(false);
-    for (let i = 0; i < config.supportedFlags.length; i++) {
-        flagSelect.option(config.supportedFlags[i]);
+    for (let i = 0; i < config.countryFlags.length; i++) {
+        flagSelect.option(config.countryFlags[i]);
+    }
+    let selectDivider = "---------";
+
+    flagSelect.option(selectDivider);
+    flagSelect.disable(selectDivider);
+    for (let i = 0; i < config.prideFlags.length; i++) {
+        flagSelect.option(config.prideFlags[i]);
     }
     flagSelect.selected(config.whichFlag);
     flagSelect.input(() => {
@@ -156,7 +163,7 @@ function canvasMouseClicked() {
     maybeAddShape(mouseX, mouseY);
 }
 
-
+SPEED = 10;
 function draw() {
     console.debug(config.seed);
 
@@ -165,6 +172,9 @@ function draw() {
         shape.display();
     }
     if (config.targetPercentFilled > percentFilled) {
-        maybeAddShape();
+        for(let i = 0; i < SPEED; i++){
+            
+            maybeAddShape();
+        }
     }
 }
