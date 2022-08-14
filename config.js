@@ -18,10 +18,10 @@ function Config({
     this.allowTouchingEdges = false;
     this.targetPercentFilled = targetPercentFilled === undefined ? 0.7 : targetPercentFilled;
     this.supportedFlags = ["Ukraine", "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual", "Lesbian"];
-    this.whichFlag = whichFlag === undefined ? random(this.supportedFlags) : whichFlag;
     this.inscribedHearts = true;
     this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
     this.maxRotation = maxRotation === undefined ? PI /10 : maxRotation;
+    this.whichFlag = this.whichFlag;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
     this.setSeed = function() {
@@ -29,6 +29,7 @@ function Config({
             this.seed = round(random(1000000));
         }
         randomSeed(this.seed);
+        this.whichFlag = this.whichFlag === undefined ? random(this.supportedFlags) : this.whichFlag;
     }
 
     this.getTargetPercentFilled = function() {

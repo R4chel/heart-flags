@@ -1,5 +1,5 @@
 // Global configs, set here to override default values
-let seed;
+let seed = 0;
 
 // GLOBAL DATA
 let latestGitVersion;

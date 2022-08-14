@@ -16,38 +16,29 @@ function Shape({
         r: r
 
     };
-    this.points = computePoints(this.boundingCircle, inscribed, rotation);
+    // pointsWithoutCenter are non-translated points
+    this.pointsWithoutCenter = computePoints(this.boundingCircle, inscribed, rotation);
     this.color = color;
 
     this.colors = colors;
     this.colorIndex = floor(this.boundingCircle.y * colors.length / height);
     this.levels = levels;
-    this.nested = computeNestedPoints(this.boundingCircle, this.points, this.colors, this.levels);
+    this.nested = computeNestedPoints(this.boundingCircle, this.pointsWithoutCenter, this.colors, this.levels);
+        
 
     this.changeColors = function(colors) {
         this.colors = colors;
         this.colorIndex = floor(this.boundingCircle.y * this.colors.length / height);
         while(this.nested.length <= this.levels * this.colors.length){
-            this.nested.push({points : scalePoints(this.boundingCircle, this.points, CONCENTRIC_FACTOR ** (this.nested.length + 1))});
+            this.nested.push({points : scaleAndTranslatePoints(this.boundingCircle, this.pointsWithoutCenter, CONCENTRIC_FACTOR ** (this.nested.length + 1))});
+            
         }
     }
 
     this.display = function() {
-        push();
-        translate(this.boundingCircle.x, this.boundingCircle.y);
-
         let colorIndex = this.colorIndex;
         stroke(this.colors[(colorIndex + 1) % this.colors.length]);
-        fill(this.colors[colorIndex]);
-        beginShape();
-        for (let i = 0; i < this.points.length; i++) {
-            let p = this.points[i];
-            curveVertex(p.x, p.y);
-        }
-        endShape(CLOSE);
-
-        colorIndex++;
-        for (let j = 0; j < this.levels * this.colors.length; j++) {
+        for (let j = 0; j < this.levels * this.colors.length + 1; j++) {
             let points = this.nested[j].points;
             fill(this.colors[colorIndex % this.colors.length]);
             beginShape();
@@ -60,11 +51,10 @@ function Shape({
             colorIndex++;
 
         }
-        pop();
 
-        noFill();
-        stroke("red");
-        circle(this.boundingCircle.x,this.boundingCircle.y, this.boundingCircle.r);
+        // noFill();
+        // stroke("red");
+        // circle(this.boundingCircle.x,this.boundingCircle.y, this.boundingCircle.r);
     }
 
 }
@@ -82,7 +72,7 @@ function fancyHeartPoints(boundingCircle, inscribed) {
     let y = 1.42 * r;
     return polarShapePoints({
         r: r,
-        x: x,
+        x: 0,
         y: y,
     }, fancyHeart);
 }
@@ -103,8 +93,9 @@ function polarShapePoints(circle, f) {
         let x = amplitude * cos(theta) ;
         let y = amplitude * sin(theta) ;
         points.push({
-            x: x,
-            y: y
+            // This is not actually adding the center but the offset from the center
+            x: x + circle.x,
+            y: y + circle.y
         });
     }
     return points;
@@ -126,7 +117,7 @@ function rotatePoints(points, theta) {
     return rotatedPoints;
 }
 
-function scalePoints(points, scalar) {
+function scaleAndTranslatePoints(boundingCircle, points, scalar) {
     let scaledPoints = [];
     for (let i = 0; i < points.length; i++) {
         let p = points[i];
@@ -135,8 +126,8 @@ function scalePoints(points, scalar) {
         let x = px * scalar;
         let y = py * scalar;
         scaledPoints.push({
-            x: x ,
-            y: y 
+            x: x + boundingCircle.x,
+            y: y + boundingCircle.y
         });
     }
     return scaledPoints;
@@ -145,10 +136,10 @@ function scalePoints(points, scalar) {
 
 function computeNestedPoints(boundingCircle, points, colors, levels) {
     let nested = [];
-    let scalar = CONCENTRIC_FACTOR;
-    while (nested.length <= levels * colors.length) {
+    let scalar = 1;
+    while (nested.length <= levels * colors.length + 1) {
         nested.push({
-            points: scalePoints(points, scalar)
+            points: scaleAndTranslatePoints(boundingCircle, points, scalar)
         });
         scalar *= CONCENTRIC_FACTOR;
     }
