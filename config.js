@@ -18,7 +18,6 @@ function Config({
     this.allowTouchingEdges = true;
     this.targetPercentFilled = targetPercentFilled === undefined ? 0.95 : targetPercentFilled;
     this.countryFlags = [ "Ukraine" ];
-    
     this.prideFlags = [ "LGBT", "Pansexual", "Trans", "Non-binary", "Bisexual", "Lesbian"];
     this.supportedFlags = this.countryFlags.concat(this.prideFlags);
     this.inscribed = true;
@@ -33,27 +32,27 @@ function Config({
         }
         randomSeed(this.seed);
         this.whichFlag = this.whichFlag === undefined ? random(this.supportedFlags) : this.whichFlag;
-    }
+    };
 
     this.getTargetPercentFilled = function() {
         return this.targetPercentFilled;
-    }
+    };
+
     this.setTargetPercentFilled = function(targetPercentFilled) {
         this.targetPercentFilled = targetPercentFilled;
-    }
-    this.getWhichFlag = function() {
-        return this.whichFlag;
-    }
+    };
+
     this.setWhichFlag = function(whichFlag) {
         this.whichFlag = whichFlag;
-    }
+    };
 
     this.totalArea = function(){
         return width * height;
-    }
+    };
+
     this.targetAreaFilled = function() {
         return width * height * this.targetPercentFilled;
-    }
+    };
 
 
 

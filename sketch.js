@@ -1,6 +1,11 @@
 // Global configs, set here to override default values
 let seed;
 let MIN_RADIUS = 5;
+let SPEED = 100;
+// JITTER is about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
+// TODO: Jitter, and min_radius are all configurations. Maybe they could go in the config file??  Also how many levels
+let JITTER = 5;
+
 
 // GLOBAL DATA
 let latestGitVersion;
@@ -77,9 +82,6 @@ function updatePercentFilledP() {
     percentFilledP.html("Current Approx Percent Filled: " + parseFloat(percentFilled * 100).toFixed(2) + "%");
 }
 
-// JITTER is about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
-// TODO: Jitter, and min_radius are all configurations. Maybe they could go in the config file??  Also how many levels
-JITTER = 5;
 
 function maybeSpawnShape(x, y, forced = false) {
     let r = maxRadius(x, y);
@@ -166,23 +168,6 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     return slider;
 }
 
-function makeCheckbox(name, getter, setter) {
-    let d = createDiv();
-
-    let label = createElement("label");
-    let checkbox = createCheckbox(name, getter());
-    checkbox.changed(function() {
-        setter(checkbox.checked());
-        redraw();
-    })
-    label.html(name);
-    label.attribute("for", checkbox.id());
-
-    d.child(label);
-    d.child(checkbox);
-    return checkbox;
-}
-
 function colorAtPoint(x, y, colors) {
     colors = colors === undefined ? config.flagColors() : colors;
     let index = floor(y * colors.length / config.canvasHeight);
@@ -192,8 +177,6 @@ function colorAtPoint(x, y, colors) {
 function canvasMouseClicked() {
     maybeAddShape(mouseX, mouseY, true);
 }
-
-SPEED = 100;
 
 function draw() {
     console.debug(config.seed);
