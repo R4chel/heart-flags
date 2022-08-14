@@ -163,7 +163,7 @@ function canvasMouseClicked() {
     maybeAddShape(mouseX, mouseY);
 }
 
-SPEED = 10;
+SPEED = 100;
 function draw() {
     console.debug(config.seed);
 

@@ -1,0 +1,17 @@
+html,
+body {
+  margin: 20px;
+  padding: 5px;
+}
+
+fanvas {
+  display: block;
+}
+
+p {
+  font-size: 20px;
+}
+
+a {
+  font-size: 20px;
+}
