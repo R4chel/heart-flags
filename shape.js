@@ -18,14 +18,14 @@ function Shape({
     // pointsWithoutCenter are non-translated points
     this.pointsWithoutCenter = computePoints(this.boundingCircle, inscribed, rotation);
     this.colors = colors;
-    this.colorIndex = floor(this.boundingCircle.y * colors.length / height);
+    this.colorIndex = computeColorIndex(this.boundingCircle, this.colors);
     this.levels = levels;
     this.nested = computeNestedPoints(this.boundingCircle, this.pointsWithoutCenter, this.colors, this.levels);
     this.dirty = true;
 
     this.changeColors = function(colors) {
         this.colors = colors;
-        this.colorIndex = floor(this.boundingCircle.y * this.colors.length / height);
+        this.colorIndex = computeColorIndex(this.boundingCircle, this.colors);
         while (this.nested.length <= this.levels * this.colors.length) {
             this.nested.push({
                 points: scaleAndTranslatePoints(this.boundingCircle, this.pointsWithoutCenter, CONCENTRIC_FACTOR ** (this.nested.length + 1))
@@ -152,4 +152,9 @@ function computeNestedPoints(boundingCircle, points, colors, levels) {
     }
     return nested;
 
+}
+
+function computeColorIndex(boundingCircle, colors){
+    // contraint was added to deal with edge cases where center is outside of canvas
+    return floor(constrain(boundingCircle.y,0,height) * colors.length / height);
 }
