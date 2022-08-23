@@ -9,6 +9,7 @@ function Config({
     whichFlag,
     backgroundColor,
     maxRotation,
+    speed,
 }) {
     this.debug = debug === undefined ? false : debug;
     this.canvasName = canvasName === undefined ? "hearts" : canvasName;
@@ -24,6 +25,7 @@ function Config({
     this.backgroundColor = backgroundColor === undefined ? 255 : backgroundColor;
     this.maxRotation = maxRotation === undefined ? PI /10 : maxRotation;
     this.whichFlag = this.whichFlag;
+    this.speed = speed === undefined ? 20 : speed;
 
     this.seed = seed === undefined ? (debug ? 1 : seed) : seed;
     this.setSeed = function() {
@@ -42,6 +44,13 @@ function Config({
         this.targetPercentFilled = targetPercentFilled;
     };
 
+    this.getSpeed = function() {
+        return this.speed;
+    };
+
+    this.setSpeed = function(speed) {
+        this.speed = speed;
+    };
     this.setWhichFlag = function(whichFlag) {
         this.whichFlag = whichFlag;
     };

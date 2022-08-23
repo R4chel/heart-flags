@@ -1,7 +1,6 @@
 // Global configs, set here to override default values
 let seed;
 let MIN_RADIUS = 5;
-let SPEED = 100;
 // JITTER is about parameterizing the overlap of the hearts. Also specifiying if hearts are inscribed also affects this.
 // TODO: Jitter, and min_radius are all configurations. Maybe they could go in the config file??  Also how many levels
 let JITTER = 5;
@@ -48,6 +47,8 @@ function setup() {
         config.setWhichFlag(flagSelect.value());
         recolorShapes();
     });
+    makeSliderWithoutTextInput("🐢","🐇", 1, 200, 5, config.getSpeed, config.setSpeed);
+
     let d = createDiv();
     percentFilledP = createP();
     updatePercentFilledP();
@@ -168,6 +169,24 @@ function makeSlider(name, minimum, maximum, delta, getter, setter) {
     return slider;
 }
 
+function makeSliderWithoutTextInput(leftLabelText, rightLabelText, minimum, maximum, delta, getter, setter) {
+    let d = createDiv();
+
+    let leftLabel = createElement("label");
+    let slider = createSlider(minimum, maximum, getter.apply(config), delta);
+    let rightLabel = createElement("label");
+    leftLabel.html(leftLabelText);
+    leftLabel.attribute("for", slider.id());
+    slider.input(function() {
+        setter.apply(config, [slider.value()]);
+    });
+    rightLabel.html(rightLabelText);
+    rightLabel.attribute("for", slider.id());
+    d.child(leftLabel);
+    d.child(slider);
+    d.child(rightLabel);
+    return slider;
+}
 function colorAtPoint(x, y, colors) {
     colors = colors === undefined ? config.flagColors() : colors;
     let index = floor(y * colors.length / config.canvasHeight);
@@ -190,7 +209,7 @@ function draw() {
         shape.display();
     }
     if (config.targetPercentFilled > percentFilled) {
-        for (let i = 0; i < SPEED; i++) {
+        for (let i = 0; i < config.speed; i++) {
             maybeAddShape();
         }
     }
